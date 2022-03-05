@@ -3,7 +3,7 @@ tegen is a Rust library designed to generate fast text from a template. (heavily
 
 # Usage
 ```rs
-use tegen::TextGenerator;
+use tegen::tegen::TextGenerator;
 
 fn main() {
     let tg = TextGenerator::new();
