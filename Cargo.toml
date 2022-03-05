@@ -1,0 +1,15 @@
+[package]
+name = "tegen"
+version = "0.1.0"
+edition = "2021"
+readme = "README.md"
+repository = "https://github.com/vs-123/tegen"
+documentation = "https://docs.rs/tegen/0.1.0/tegen/"
+license = "MIT OR Apache-2.0"
+keywords = ["text", "text-generation", "templates", "tegen"]
+categories = ["development-tools::debuggings"]
+homepage = "https://github.com/vs-123/tegen"
+description = "tegen is a Rust library designed to generate text from a given template."
+
+[dependencies]
+rand = "0.8.5"
