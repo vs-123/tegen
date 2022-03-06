@@ -16,10 +16,15 @@ impl TextGenerator {
             sep: '|',
         }
     }
-    
+
     /// Generates text from the given template.
-    pub fn generate(&self, text: String) -> String {
-        self.scan_and_replace(text.chars().collect::<Vec<char>>()).iter().map(|x| (*x).to_string()).collect()
+    /// A template starts with `{` and ends with `}` and can contain `|` characters to separate different options.
+    /// For example, `{Hello|Salutations}, {World|Reality}!`
+    pub fn generate(&self, text: &str) -> String {
+        self.scan_and_replace(text.chars().collect::<Vec<char>>())
+            .iter()
+            .map(|x| (*x).to_string())
+            .collect()
     }
 
     fn get_random_part(&self, text: Vec<char>) -> Vec<char> {
@@ -29,14 +34,14 @@ impl TextGenerator {
 
         let mut parts = Vec::<String>::new();
 
-        for i in 0..text.len() {
-            if text[i] ==self.start_c {
+        for (i, &c) in text.iter().enumerate() {
+            if c == self.start_c {
                 open_level += 1;
                 is_ignore = true;
                 continue;
             }
 
-            if text[i] ==self.end_c {
+            if c == self.end_c {
                 open_level -= 1;
                 if open_level == 0 {
                     is_ignore = false;
@@ -48,7 +53,7 @@ impl TextGenerator {
                 continue;
             }
 
-            if text[i] ==self.sep {
+            if c == self.sep {
                 parts.push(text[last_pos..i].iter().map(|x| (*x).to_string()).collect());
                 last_pos = i + 1;
             }
@@ -68,25 +73,43 @@ impl TextGenerator {
         let mut is_find = false;
         let mut result = Vec::<char>::new();
 
-        for i in 0..text.len() {
-            if text[i] ==self.start_c {
+        for (i, &c) in text.iter().enumerate() {
+            if c == self.start_c {
                 if open_level == 0 {
                     start_pos = i;
-                    result.append(&mut text[start_safe_pos..start_pos].iter().map(|x| (*x).to_string()).collect::<String>().chars().collect::<Vec<char>>());
+                    result.append(
+                        &mut text[start_safe_pos..start_pos]
+                            .iter()
+                            .map(|x| (*x).to_string())
+                            .collect::<String>()
+                            .chars()
+                            .collect::<Vec<char>>(),
+                    );
                 }
-                
+
                 open_level += 1;
                 continue;
             }
 
-            if text[i] ==self.end_c {
+            if c == self.end_c {
                 open_level -= 1;
                 if open_level == 0 {
                     is_find = true;
                     end_pos = i;
 
                     start_safe_pos = end_pos + 1;
-                    result.append(&mut self.scan_and_replace(self.get_random_part(text[(start_pos+1)..end_pos].iter().map(|x| (*x).to_string()).collect::<String>().chars().collect::<Vec<char>>())));
+                    result.append(
+                        &mut self.scan_and_replace(
+                            self.get_random_part(
+                                text[(start_pos + 1)..end_pos]
+                                    .iter()
+                                    .map(|x| (*x).to_string())
+                                    .collect::<String>()
+                                    .chars()
+                                    .collect::<Vec<char>>(),
+                            ),
+                        ),
+                    );
                 }
                 continue;
             }
@@ -96,7 +119,14 @@ impl TextGenerator {
             return text;
         }
 
-        result.append(&mut text[(end_pos+1)..].iter().map(|x| (*x).to_string()).collect::<String>().chars().collect::<Vec<char>>());
+        result.append(
+            &mut text[(end_pos + 1)..]
+                .iter()
+                .map(|x| (*x).to_string())
+                .collect::<String>()
+                .chars()
+                .collect::<Vec<char>>(),
+        );
 
         result
     }
