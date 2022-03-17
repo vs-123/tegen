@@ -77,11 +77,10 @@ impl TextGenerator {
         let mut is_find = false;
 
         let mut result = Vec::<char>::with_capacity(text.len());
-        
+
         // The capacity never surpasses text.len() + 1, because only after a series of conditionals is
         // parts pushed to. (Then one extra, for the last line, though I doubt every single character
         // is a separator).
-
 
         for (i, &c) in text.iter().enumerate() {
             if c == self.start_c {
