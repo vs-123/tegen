@@ -32,7 +32,12 @@ impl TextGenerator {
         let mut last_pos = 0;
         let mut is_ignore = false;
 
-        let mut parts = Vec::<String>::new();
+        // let mut parts = Vec::<String>::new();
+        let mut parts = Vec::<String>::with_capacity(text.len() + 1);
+
+        // The capacity never surpasses text.len() + 1, because only after a series of conditionals is
+        // parts pushed to. (Then one extra, for the last line, though I doubt every single character
+        // is a separator).
 
         for (i, &c) in text.iter().enumerate() {
             if c == self.start_c {
@@ -71,7 +76,13 @@ impl TextGenerator {
         let mut end_pos = 0;
         let mut open_level = 0;
         let mut is_find = false;
-        let mut result = Vec::<char>::new();
+        let mut result = Vec::<char>::with_capacity(text.len());
+        // let mut result = Vec::<char>::new();
+        
+        // The capacity never surpasses text.len() + 1, because only after a series of conditionals is
+        // parts pushed to. (Then one extra, for the last line, though I doubt every single character
+        // is a separator).
+
 
         for (i, &c) in text.iter().enumerate() {
             if c == self.start_c {
