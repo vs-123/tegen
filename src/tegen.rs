@@ -85,9 +85,7 @@ impl TextGenerator {
             if c == self.start_c {
                 if open_level == 0 {
                     start_pos = i;
-                    result.append(
-                        &mut text[start_safe_pos..start_pos].to_vec(),
-                    );
+                    result.append(&mut text[start_safe_pos..start_pos].to_vec());
                 }
 
                 open_level += 1;
@@ -101,13 +99,9 @@ impl TextGenerator {
                     end_pos = i;
 
                     start_safe_pos = end_pos + 1;
-                    result.append(
-                        &mut self.scan_and_replace(
-                            self.get_random_part(
-                                text[(start_pos + 1)..end_pos].to_vec(),
-                            ),
-                        ),
-                    );
+                    result.append(&mut self.scan_and_replace(
+                        self.get_random_part(text[(start_pos + 1)..end_pos].to_vec()),
+                    ));
                 }
                 continue;
             }
