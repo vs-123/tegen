@@ -57,7 +57,7 @@ impl TextGenerator {
             }
 
             if c == self.sep {
-                parts.push(text[last_pos..i].iter().collect::<String>());
+                parts.push(text[last_pos..i].into_iter().collect::<String>());
                 last_pos = i + 1;
             }
         }
