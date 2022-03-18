@@ -23,7 +23,6 @@ impl TextGenerator {
     pub fn generate(&self, text: &str) -> String {
         self.scan_and_replace(text.chars().collect::<Vec<char>>())
             .iter()
-            .map(|x| (*x).to_string())
             .collect()
     }
 
@@ -58,12 +57,12 @@ impl TextGenerator {
             }
 
             if c == self.sep {
-                parts.push(text[last_pos..i].iter().map(|x| (*x).to_string()).collect());
+                parts.push(text[last_pos..i].iter().collect::<String>());
                 last_pos = i + 1;
             }
         }
 
-        parts.push(text[last_pos..].iter().map(|x| (*x).to_string()).collect());
+        parts.push(text[last_pos..].iter().collect::<String>());
 
         let mut rng = rand::thread_rng();
         parts[rng.gen_range(0..parts.len())].chars().collect()
@@ -87,12 +86,7 @@ impl TextGenerator {
                 if open_level == 0 {
                     start_pos = i;
                     result.append(
-                        &mut text[start_safe_pos..start_pos]
-                            .iter()
-                            .map(|x| (*x).to_string())
-                            .collect::<String>()
-                            .chars()
-                            .collect::<Vec<char>>(),
+                        &mut text[start_safe_pos..start_pos].to_vec(),
                     );
                 }
 
@@ -110,12 +104,7 @@ impl TextGenerator {
                     result.append(
                         &mut self.scan_and_replace(
                             self.get_random_part(
-                                text[(start_pos + 1)..end_pos]
-                                    .iter()
-                                    .map(|x| (*x).to_string())
-                                    .collect::<String>()
-                                    .chars()
-                                    .collect::<Vec<char>>(),
+                                text[(start_pos + 1)..end_pos].to_vec(),
                             ),
                         ),
                     );
@@ -128,14 +117,7 @@ impl TextGenerator {
             return text;
         }
 
-        result.append(
-            &mut text[(end_pos + 1)..]
-                .iter()
-                .map(|x| (*x).to_string())
-                .collect::<String>()
-                .chars()
-                .collect::<Vec<char>>(),
-        );
+        result.append(&mut text[(end_pos + 1)..].to_vec());
 
         result
     }
