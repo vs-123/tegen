@@ -21,23 +21,17 @@ impl TextGenerator {
     /// A template starts with `{` and ends with `}` and can contain `|` characters to separate different options.
     /// For example, `{Hello|Salutations}, {World|Reality}!`
     pub fn generate(&self, text: &str) -> String {
-        self.scan_and_replace(text.chars().collect::<Vec<char>>())
-            .iter()
-            .collect()
+        self.scan_and_replace(text).to_string()
     }
-
-    fn get_random_part(&self, text: Vec<char>, rng: &mut ThreadRng) -> Vec<char> {
+    
+    fn get_random_part(&self, text: &str, rng: &mut ThreadRng) -> String {
         let mut open_level = 0;
         let mut last_pos = 0;
         let mut is_ignore = false;
 
-        let mut parts = Vec::<String>::with_capacity(text.len() + 1);
+        let mut parts = Vec::<String>::with_capacity(text.len());
 
-        // The capacity never surpasses text.len() + 1, because only after a series of conditionals is
-        // parts pushed to. (Then one extra, for the last line, though I doubt every single character
-        // is a separator).
-
-        for (i, &c) in text.iter().enumerate() {
+        for (i, c) in text.chars().enumerate() {
             if c == self.start_c {
                 open_level += 1;
                 is_ignore = true;
@@ -57,24 +51,24 @@ impl TextGenerator {
             }
 
             if c == self.sep {
-                parts.push(text[last_pos..i].into_iter().collect::<String>());
+                parts.push(text[last_pos..i].to_string());
                 last_pos = i + 1;
             }
         }
 
-        parts.push(text[last_pos..].iter().collect::<String>());
-
-        parts[rng.gen_range(0..parts.len())].chars().collect()
+        parts.push(text[last_pos..].to_string());
+        let rng = rng.gen_range(0..parts.len());
+        return parts[rng].clone();
     }
 
-    fn scan_and_replace(&self, text: Vec<char>) -> Vec<char> {
+    fn scan_and_replace(&self, text: &str) -> String {
         let mut start_safe_pos = 0;
         let mut start_pos = 0;
         let mut end_pos = 0;
         let mut open_level = 0;
         let mut is_find = false;
 
-        let mut result = Vec::<char>::with_capacity(text.len());
+        let mut result = String::new();
 
         // The capacity never surpasses text.len() + 1, because only after a series of conditionals is
         // parts pushed to. (Then one extra, for the last line, though I doubt every single character
@@ -82,11 +76,11 @@ impl TextGenerator {
 
         // Create rng here, so there isn't a random number generator constructed every call to get_random_part.
         let mut rng = rand::thread_rng();
-        for (i, &c) in text.iter().enumerate() {
+        for (i, c) in text.chars().enumerate() {
             if c == self.start_c {
                 if open_level == 0 {
                     start_pos = i;
-                    result.append(&mut text[start_safe_pos..start_pos].to_vec());
+                    result.push_str(&text[start_safe_pos..start_pos]);
                 }
 
                 open_level += 1;
@@ -100,19 +94,19 @@ impl TextGenerator {
                     end_pos = i;
 
                     start_safe_pos = end_pos + 1;
-                    result.append(&mut self.scan_and_replace(
-                        self.get_random_part(text[(start_pos + 1)..end_pos].to_vec(), &mut rng),
-                    ));
+
+
+                    result.push_str(&self.scan_and_replace(
+                        &self.get_random_part(&text[(start_pos + 1)..end_pos], &mut rng)));
                 }
                 continue;
             }
         }
 
         if !is_find {
-            return text;
+            return text.to_string();
         }
-
-        result.append(&mut text[(end_pos + 1)..].to_vec());
+        result.push_str(&text[(end_pos + 1)..]);
 
         result
     }
