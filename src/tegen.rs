@@ -21,7 +21,7 @@ impl TextGenerator {
     /// A template starts with `{` and ends with `}` and can contain `|` characters to separate different options.
     /// For example, `{Hello|Salutations}, {World|Reality}!`
     pub fn generate(&self, text: &str) -> String {
-        self.scan_and_replace(text).to_string()
+        self.scan_and_replace(text)
     }
     
     fn get_random_part(&self, text: &str, rng: &mut ThreadRng) -> String {
@@ -58,7 +58,7 @@ impl TextGenerator {
 
         parts.push(text[last_pos..].to_string());
         let rng = rng.gen_range(0..parts.len());
-        return parts[rng].clone();
+        parts[rng].clone()
     }
 
     fn scan_and_replace(&self, text: &str) -> String {
