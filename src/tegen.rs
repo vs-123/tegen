@@ -1,10 +1,16 @@
-use rand::{Rng, prelude::ThreadRng};
+use rand::{prelude::ThreadRng, Rng};
 
 /// The `TextGenerator` struct, used for generating text from a template.
 pub struct TextGenerator {
     start_c: char,
     end_c: char,
     sep: char,
+}
+
+impl Default for TextGenerator {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl TextGenerator {
@@ -23,7 +29,7 @@ impl TextGenerator {
     pub fn generate(&self, text: &str) -> String {
         self.scan_and_replace(text)
     }
-    
+
     fn get_random_part(&self, text: &str, rng: &mut ThreadRng) -> String {
         let mut open_level = 0;
         let mut last_pos = 0;
@@ -70,10 +76,6 @@ impl TextGenerator {
 
         let mut result = String::new();
 
-        // The capacity never surpasses text.len() + 1, because only after a series of conditionals is
-        // parts pushed to. (Then one extra, for the last line, though I doubt every single character
-        // is a separator).
-
         // Create rng here, so there isn't a random number generator constructed every call to get_random_part.
         let mut rng = rand::thread_rng();
         for (i, c) in text.chars().enumerate() {
@@ -95,9 +97,9 @@ impl TextGenerator {
 
                     start_safe_pos = end_pos + 1;
 
-
                     result.push_str(&self.scan_and_replace(
-                        &self.get_random_part(&text[(start_pos + 1)..end_pos], &mut rng)));
+                        &self.get_random_part(&text[(start_pos + 1)..end_pos], &mut rng),
+                    ));
                 }
                 continue;
             }
